@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Trang của tôi</title>
+    <style>
+      body {
+        background-color: #1a1a2e;
+        color: white;
+        font-family: Arial;
+        text-align: center;
+      }
+
+      h1 {
+        color: #e94560;
+        font-size: 40px;
+      }
+
+      .nut {
+        background-color: #e94560;
+        color: white;
+        padding: 15px 30px;
+        border: none;
+        border-radius: 26px;
+        font-size: 16px;
+      }
+    </style>
+  </head>
+  <body>
+
+    <h1>Trang của tôi</h1>
+    <p>Xin chào mấy con vợ!</p>
+    <button class="nut" onclick="chaoHoi()">Bấm vào đây</button>
+<button class="nut" onclick="doiNen()">doi mau nen</button>
+
+    <p>Truy cập Google:</p>
+    <a href="https://google.com" style="color: blue;">
+      Bấm vào đây để vào Google
+    </a>
+
+    <br><br>
+
+    <img src="" width="200">
+<script>
+  function chaoHoi() {
+    alert("tao là bố của chúng mày!");
+  }
+
+  let viTri = 0;
+  let danhSachMau = ['#1a1a2e', '#e94560', '#f4a261', '#2d6a4f', 'purple'];
+
+  function doiNen() {
+    document.body.style.backgroundColor = danhSachMau[viTri];
+    viTri = (viTri + 1) % danhSachMau.length;
+  }
+</script>
+  </body>
+</html>
