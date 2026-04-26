@@ -249,12 +249,26 @@
     }
 
     function guitinnhan() {
-      let tinnhan = document.getElementById("hopTinNhan").value;
-      if (tinnhan === "") return;
-      let khung = document.getElementById("khungChat");
-      khung.innerHTML += "<p style='margin:5px 0;'>🧑 " + tinnhan + "</p>";
-      document.getElementById("hopTinNhan").value = "";
-      khung.scrollTop = khung.scrollHeight;
+  let tinnhan = document.getElementById("hopTinNhan").value;
+  if (tinnhan === "") return;
+  
+  db.collection("tinnhan").add({
+    noidung: tinnhan,
+    thoiGian: Date.now()
+  }).then(function() {
+    document.getElementById("hopTinNhan").value = "";
+  });
+    }
+    function taiTinNhan() {
+  db.collection("tinnhan").orderBy("thoiGian").onSnapshot(function(snapshot) {
+    let khung = document.getElementById("khungChat");
+    khung.innerHTML = "";
+    snapshot.forEach(function(doc) {
+      let data = doc.data();
+      khung.innerHTML += "<p style='margin:5px 0;'>🧑 " + data.noidung + "</p>";
+    });
+    khung.scrollTop = khung.scrollHeight;
+  });
     }
 
     function taoTaiKhoan() {
@@ -349,7 +363,7 @@
     });
   });
 }
-taiTatCaBai();
+taiTatCaBai();taiTinNhan();
   </script>
 
 </body>
