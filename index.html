@@ -191,6 +191,21 @@
       <span>👤</span>Cá nhân
     </div>
   </div>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyAsOsURWu5zZls4P1m2eQ-cja1MaNqPZOg",
+    authDomain: "shent-zekrom-e1b75.firebaseapp.com",
+    projectId: "shent-zekrom-e1b75",
+    storageBucket: "shent-zekrom-e1b75.firebasestorage.app",
+    messagingSenderId: "474389599605",
+    appId: "1:474389599605:web:f9290355487ba0fbab2f3c"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+  console.log("Firebase kết nối thành công!");
+</script>
   <script>
     let danhSachTK = {};
     let viTri = 0;
@@ -269,34 +284,72 @@
       document.getElementById("khungDangNhap").style.display = "block";
       document.getElementById("hoSo").style.display = "none";
     }
+  function xemAnh() {
+  let file = document.getElementById("chonAnh").files[0];
+  let reader = new FileReader();
+  reader.onload = function(e) {
+    let id = Date.now();
+    let ghiChu = document.getElementById("ghiChu").value || "Không có ghi chú";
 
-    function xemAnh() {
-      let file = document.getElementById("chonAnh").files[0];
-      let reader = new FileReader();
-      reader.onload = function(e) {
-        let id = Date.now();
-        let ghiChu = document.getElementById("ghiChu").value || "Không có ghi chú";
-        let baiMoi = document.createElement("div");
-        baiMoi.style = "text-align:center; padding:20px 0; border-bottom:1px solid #333;";
-        baiMoi.innerHTML = `
-          <img src="${e.target.result}" style="width:300px; height:300px; border-radius:20px; object-fit:cover;">
-          <p style="font-weight:bold; margin:10px 0 0 0;">Bạn vừa đăng!</p>
-          <p style="color:gray; font-size:14px; margin:5px 0;">${ghiChu}</p>
-          <div style="display:flex; gap:20px; justify-content:center; margin-top:10px;">
-            <button onclick="like(this)" style="background:none; border:none; color:white; font-size:20px;">❤️ <span>0</span></button>
-            <button onclick="binhLuan(${id})" style="background:none; border:none; color:white; font-size:20px;">💬 <span>0</span></button>
-          </div>
-          <div id="bl${id}" style="display:none; width:90%; background-color:#16213e; border-radius:10px; padding:10px; margin:10px auto;">
-            <div id="danhsachbl${id}"></div>
-            <input id="nhapbl${id}" type="text" placeholder="Bình luận..." class="input-dep" style="width:60%;">
-            <button onclick="guiBinhLuan(${id})" class="nut" style="padding:8px 15px; font-size:13px;">Gửi</button>
-          </div>
-        `;
-        document.getElementById("danhSachBai").prepend(baiMoi);
+    // Nén ảnh trước khi lưu
+    let canvas = document.createElement("canvas");
+    let img = new Image();
+    img.onload = function() {
+      canvas.width = 400;
+      canvas.height = 400;
+      let ctx = canvas.getContext("2d");
+      ctx.drawImage(img, 0, 0, 400, 400);
+      let anhNen = canvas.toDataURL("image/jpeg", 0.5);
+
+      // Lưu lên Firestore
+      db.collection("baidang").add({
+        anh: anhNen,
+        ghiChu: ghiChu,
+        thoiGian: Date.now(),
+        luot_like: 0
+      }).then(function() {
+        hienBaiDang(id, anhNen, ghiChu);
         document.getElementById("ghiChu").value = "";
-      }
-      reader.readAsDataURL(file);
+        alert("Đăng ảnh thành công!");
+      }).catch(function(error) {
+        alert("Lỗi: " + error);
+      });
     }
+    img.src = e.target.result;
+  }
+  reader.readAsDataURL(file);
+}
+
+  function hienBaiDang(id, anh, ghiChu) {
+  let baiMoi = document.createElement("div");
+  baiMoi.style = "text-align:center; padding:20px 0; border-bottom:1px solid #333;";
+  baiMoi.innerHTML = `
+    <img src="${anh}" style="width:300px; height:300px; border-radius:20px; object-fit:cover;">
+    <p style="font-weight:bold; margin:10px 0 0 0;">Bạn vừa đăng!</p>
+    <p style="color:gray; font-size:14px; margin:5px 0;">${ghiChu}</p>
+    <div style="display:flex; gap:20px; justify-content:center; margin-top:10px;">
+      <button onclick="like(this)" style="background:none; border:none; color:white; font-size:20px;">❤️ <span>0</span></button>
+      <button onclick="binhLuan(${id})" style="background:none; border:none; color:white; font-size:20px;">💬 <span>0</span></button>
+    </div>
+    <div id="bl${id}" style="display:none; width:90%; background-color:#16213e; border-radius:10px; padding:10px; margin:10px auto;">
+      <div id="danhsachbl${id}"></div>
+      <input id="nhapbl${id}" type="text" placeholder="Bình luận..." class="input-dep" style="width:60%;">
+      <button onclick="guiBinhLuan(${id})" class="nut" style="padding:8px 15px; font-size:13px;">Gửi</button>
+    </div>
+  `;
+  document.getElementById("danhSachBai").prepend(baiMoi);
+}
+    function taiTatCaBai() {
+  db.collection("baidang").orderBy("thoiGian", "desc").get()
+  .then(function(querySnapshot) {
+    querySnapshot.forEach(function(doc) {
+      let data = doc.data();
+      let id = doc.id;
+      hienBaiDang(id, data.anh, data.ghiChu);
+    });
+  });
+}
+taiTatCaBai();
   </script>
 
 </body>
