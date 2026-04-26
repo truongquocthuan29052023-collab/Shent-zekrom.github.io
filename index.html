@@ -19,6 +19,7 @@
       border-radius: 25px;
       font-size: 16px;
       margin: 5px;
+      cursor: pointer;
     }
     .trang {
       display: none;
@@ -47,121 +48,135 @@
       display: block;
       font-size: 22px;
     }
+    .input-dep {
+      padding: 10px;
+      border-radius: 10px;
+      border: none;
+      width: 80%;
+      background-color: #0f3460;
+      color: white;
+      margin: 5px 0;
+    }
   </style>
 </head>
 <body>
-  
-<div id="trangChuPage" class="trang active">
-
-  <!-- Nút đăng ảnh cố định trên cùng -->
-  <div style="position:fixed; top:0; left:0; width:100%; background-color:#1a1a2e; padding:10px; text-align:center; z-index:999;">
-    <input type="file" accept="image/*" id="chonAnh" style="display:none;" onchange="xemAnh()">
-    <button class="nut" onclick="document.getElementById('chonAnh').click()">📷 Đăng ảnh</button>
-    <br>
-    <input type="text" id="ghiChu" placeholder="Thêm ghi chú..." style="padding:8px; border-radius:10px; border:none; width:80%; background-color:#0f3460; color:white; margin-top:5px;">
-  </div>
-
-  <!-- Danh sách bài đăng, cuộn bình thường -->
-  <div id="danhSachBai" style="margin-top:120px; padding-bottom:70px;">
-
-    <!-- Bài 1 mẫu -->
-    <div style="text-align:center; padding:20px 0; border-bottom:1px solid #333;">
-      <div style="width:300px; height:300px; border-radius:20px; background-color:#e94560; display:flex; align-items:center; justify-content:center; font-size:80px; margin:0 auto;">🌅</div>
-      <p style="font-weight:bold; margin:10px 0 0 0;">Nguyễn Văn A</p>
-      <p style="color:gray; font-size:14px; margin:5px 0;">Hôm nay trời đẹp quá!</p>
-      <div style="display:flex; gap:20px; justify-content:center; margin-top:10px;">
-        <button onclick="like(this)" style="background:none; border:none; color:white; font-size:20px;">❤️ <span>12</span></button>
-        <button onclick="binhLuan(1)" style="background:none; border:none; color:white; font-size:20px;">💬 <span>3</span></button>
-      </div>
-      <div id="bl1" style="display:none; width:90%; background-color:#16213e; border-radius:10px; padding:10px; margin:10px auto;">
-        <div id="danhsachbl1"></div>
-        <input id="nhapbl1" type="text" placeholder="Bình luận..." style="padding:8px; border-radius:10px; border:none; width:70%; background-color:#0f3460; color:white;">
-        <button onclick="guiBinhLuan(1)" class="nut" style="padding:8px 15px; font-size:13px;">Gửi</button>
-      </div>
+  <!-- TRANG CHỦ -->
+  <div id="trangChuPage" class="trang active">
+    <div style="position:fixed; top:0; left:0; width:100%; background-color:#1a1a2e; padding:10px; text-align:center; z-index:999;">
+      <input type="file" accept="image/*" id="chonAnh" style="display:none;" onchange="xemAnh()">
+      <button class="nut" onclick="document.getElementById('chonAnh').click()">📷 Đăng ảnh</button>
+      <br>
+      <input type="text" id="ghiChu" placeholder="Thêm ghi chú..." class="input-dep">
     </div>
 
-    <!-- Bài 2 mẫu -->
-    <div style="text-align:center; padding:20px 0; border-bottom:1px solid #333;">
-      <div style="width:300px; height:300px; border-radius:20px; background-color:#2d6a4f; display:flex; align-items:center; justify-content:center; font-size:80px; margin:0 auto;">🌃</div>
-      <p style="font-weight:bold; margin:10px 0 0 0;">Trần Thị B</p>
-      <p style="color:gray; font-size:14px; margin:5px 0;">Đêm nay buồn ghê!</p>
-      <div style="display:flex; gap:20px; justify-content:center; margin-top:10px;">
-        <button onclick="like(this)" style="background:none; border:none; color:white; font-size:20px;">❤️ <span>8</span></button>
-        <button onclick="binhLuan(2)" style="background:none; border:none; color:white; font-size:20px;">💬 <span>1</span></button>
+    <div id="danhSachBai" style="margin-top:120px; padding-bottom:70px;">
+      <div style="text-align:center; padding:20px 0; border-bottom:1px solid #333;">
+        <div style="width:300px; height:300px; border-radius:20px; background-color:#e94560; display:flex; align-items:center; justify-content:center; font-size:80px; margin:0 auto;">🌅</div>
+        <p style="font-weight:bold; margin:10px 0 0 0;">Nguyễn Văn A</p>
+        <p style="color:gray; font-size:14px; margin:5px 0;">Hôm nay trời đẹp quá!</p>
+        <div style="display:flex; gap:20px; justify-content:center; margin-top:10px;">
+          <button onclick="like(this)" style="background:none; border:none; color:white; font-size:20px;">❤️ <span>12</span></button>
+          <button onclick="binhLuan(1)" style="background:none; border:none; color:white; font-size:20px;">💬 <span>3</span></button>
+        </div>
+        <div id="bl1" style="display:none; width:90%; background-color:#16213e; border-radius:10px; padding:10px; margin:10px auto;">
+          <div id="danhsachbl1"></div>
+          <input id="nhapbl1" type="text" placeholder="Bình luận..." class="input-dep" style="width:60%;">
+          <button onclick="guiBinhLuan(1)" class="nut" style="padding:8px 15px; font-size:13px;">Gửi</button>
+        </div>
       </div>
-      <div id="bl2" style="display:none; width:90%; background-color:#16213e; border-radius:10px; padding:10px; margin:10px auto;">
-        <div id="danhsachbl2"></div>
-        <input id="nhapbl2" type="text" placeholder="Bình luận..." style="padding:8px; border-radius:10px; border:none; width:70%; background-color:#0f3460; color:white;">
-        <button onclick="guiBinhLuan(2)" class="nut" style="padding:8px 15px; font-size:13px;">Gửi</button>
+
+      <div style="text-align:center; padding:20px 0; border-bottom:1px solid #333;">
+        <div style="width:300px; height:300px; border-radius:20px; background-color:#2d6a4f; display:flex; align-items:center; justify-content:center; font-size:80px; margin:0 auto;">🌃</div>
+        <p style="font-weight:bold; margin:10px 0 0 0;">Trần Thị B</p>
+        <p style="color:gray; font-size:14px; margin:5px 0;">Đêm nay buồn ghê!</p>
+        <div style="display:flex; gap:20px; justify-content:center; margin-top:10px;">
+          <button onclick="like(this)" style="background:none; border:none; color:white; font-size:20px;">❤️ <span>8</span></button>
+          <button onclick="binhLuan(2)" style="background:none; border:none; color:white; font-size:20px;">💬 <span>1</span></button>
+        </div>
+        <div id="bl2" style="display:none; width:90%; background-color:#16213e; border-radius:10px; padding:10px; margin:10px auto;">
+          <div id="danhsachbl2"></div>
+          <input id="nhapbl2" type="text" placeholder="Bình luận..." class="input-dep" style="width:60%;">
+          <button onclick="guiBinhLuan(2)" class="nut" style="padding:8px 15px; font-size:13px;">Gửi</button>
+        </div>
       </div>
     </div>
-
   </div>
-</div>
-<a href="https://google.com" style="color: lightblue;">Truy cập Google</a>
-
+  <!-- TRANG TÌM KIẾM -->
   <div id="timKiemPage" class="trang">
     <h1 style="color:#e94560;">Tìm kiếm</h1>
-    <input type="text" id="tuKhoa" placeholder="Tìm gì đó..." style="padding:10px; border-radius:10px; border:none; width:80%;"><br><br>
-    <button class="nut" onclick="timKiem()">Tìm</button>
+    <input type="text" id="tuKhoa" placeholder="Tìm gì đó..." class="input-dep">
+    <br><br>
+    <button class="nut" onclick="timKiem()">🔍 Tìm</button>
     <p id="ketQua"></p>
   </div>
 
+  <!-- TRANG CHAT -->
   <div id="chatPage" class="trang">
     <h1 style="color:#e94560;">Chat</h1>
-    
-    <div id="khungChat" style="background-color:#16213e; height:460px; overflow-y:auto; padding:5px; border-radius:0;widtg:100%; text-align:left;"></div>
 
-  <input type="text" id="hopTinNhan" placeholder="Nhập tin nhắn..." style="padding:10px; border-radius:10px; border:none; width:70%; background-color:#16213e; color:white;">
+    <div style="margin-bottom:10px;">
+      <button class="nut" style="font-size:13px; padding:8px 15px;" onclick="doiNen('#1a1a2e')">Xanh đen</button>
+      <button class="nut" style="font-size:13px; padding:8px 15px;" onclick="doiNen('#e94560')">Đỏ hồng</button>
+      <button class="nut" style="font-size:13px; padding:8px 15px;" onclick="doiNen('#f4a261')">Cam</button>
+      <button class="nut" style="font-size:13px; padding:8px 15px;" onclick="doiNen('#2d6a4f')">Xanh lá</button>
+      <button class="nut" style="font-size:13px; padding:8px 15px;" onclick="doiNen('purple')">Tím</button>
+    </div>
 
-  <button class="nut" onclick="guitinnhan()">Gửi</button>
+    <div id="khungChat" style="background-color:#16213e; height:400px; overflow-y:auto; padding:10px; border-radius:0; width:100%; box-sizing:border-box; text-align:left;"></div>
 
-</div>
-
+    <div style="display:flex; padding:10px; gap:5px;">
+      <input type="text" id="hopTinNhan" placeholder="Nhập tin nhắn..." class="input-dep" style="width:70%; margin:0;">
+      <button class="nut" onclick="guitinnhan()" style="padding:10px 15px;">Gửi</button>
+    </div>
+  </div>
+  <!-- TRANG CÁ NHÂN -->
   <div id="caNhanPage" class="trang">
 
-  <!-- Phần ảnh đại diện và tên -->
-  <div style="padding:20px;">
-    <div style="width:80px; height:80px; border-radius:50%; background-color:#e94560; margin:0 auto; font-size:40px; line-height:80px;">
-      👤
+    <!-- Phần đăng nhập/tạo tài khoản -->
+    <div id="khungDangNhap">
+      <h1 style="color:#e94560;">Cá nhân</h1>
+      <input type="text" id="tenNguoiDung" placeholder="Tên của bạn" class="input-dep">
+      <br>
+      <input type="password" id="matKhau" placeholder="Mật khẩu" class="input-dep">
+      <br><br>
+      <button class="nut" onclick="taoTaiKhoan()">Tạo tài khoản</button>
+      <button class="nut" onclick="dangNhap()">Đăng nhập</button>
     </div>
-    <h2 style="margin:10px 0 0 0;">Shen</h2>
-    <p style="color:gray; margin:5px 0;">@zekrom</p>
 
-    <button class="nut" style="font-size:13px; padding:8px 20px;">
-      Chỉnh sửa trang cá nhân
-    </button>
+    <!-- Phần hồ sơ sau khi đăng nhập -->
+    <div id="hoSo" style="display:none;">
+      <div style="width:80px; height:80px; border-radius:50%; background-color:#e94560; margin:0 auto; font-size:40px; line-height:80px;">👤</div>
+      <h2 id="tenHienThi" style="margin:10px 0 0 0;">Tên người dùng</h2>
+      <p style="color:gray; margin:5px 0;">@tendangnhap</p>
+      <button class="nut" style="font-size:13px; padding:8px 20px;">Chỉnh sửa trang cá nhân</button>
+      <button class="nut" style="font-size:13px; padding:8px 20px; background-color:#333;" onclick="dangXuat()">Đăng xuất</button>
+
+      <div style="display:flex; justify-content:space-around; padding:15px; border-top:1px solid #333; border-bottom:1px solid #333; margin-top:15px;">
+        <div>
+          <strong>128</strong>
+          <p style="color:gray; margin:0; font-size:13px;">Đang follow</p>
+        </div>
+        <div>
+          <strong>1.2K</strong>
+          <p style="color:gray; margin:0; font-size:13px;">Followers</p>
+        </div>
+        <div>
+          <strong>4.5K</strong>
+          <p style="color:gray; margin:0; font-size:13px;">Thích</p>
+        </div>
+      </div>
+
+      <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:2px; margin-top:2px;">
+        <div style="background-color:#16213e; aspect-ratio:1; display:flex; align-items:center; justify-content:center; font-size:30px;">🎵</div>
+        <div style="background-color:#16213e; aspect-ratio:1; display:flex; align-items:center; justify-content:center; font-size:30px;">🎵</div>
+        <div style="background-color:#16213e; aspect-ratio:1; display:flex; align-items:center; justify-content:center; font-size:30px;">🎵</div>
+        <div style="background-color:#16213e; aspect-ratio:1; display:flex; align-items:center; justify-content:center; font-size:30px;">🎵</div>
+        <div style="background-color:#16213e; aspect-ratio:1; display:flex; align-items:center; justify-content:center; font-size:30px;">🎵</div>
+        <div style="background-color:#16213e; aspect-ratio:1; display:flex; align-items:center; justify-content:center; font-size:30px;">🎵</div>
+      </div>
+    </div>
   </div>
-
-  <!-- Số following/followers/likes -->
-  <div style="display:flex; justify-content:space-around; padding:15px; border-top:1px solid #333; border-bottom:1px solid #333;">
-    <div>
-      <strong>128</strong>
-      <p style="color:gray; margin:0; font-size:13px;">Đang follow</p>
-    </div>
-    <div>
-      <strong>1.2K</strong>
-      <p style="color:gray; margin:0; font-size:13px;">Followers</p>
-    </div>
-    <div>
-      <strong>4.5K</strong>
-      <p style="color:gray; margin:0; font-size:13px;">Thích</p>
-    </div>
-  </div>
-
-  <!-- Lưới bài đăng -->
-  <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:2px; margin-top:2px;">
-    <div style="background-color:#16213e; aspect-ratio:1; display:flex; align-items:center; justify-content:center; font-size:30px;">🎵</div>
-    <div style="background-color:#16213e; aspect-ratio:1; display:flex; align-items:center; justify-content:center; font-size:30px;">🎵</div>
-    <div style="background-color:#16213e; aspect-ratio:1; display:flex; align-items:center; justify-content:center; font-size:30px;">🎵</div>
-    <div style="background-color:#16213e; aspect-ratio:1; display:flex; align-items:center; justify-content:center; font-size:30px;">🎵</div>
-    <div style="background-color:#16213e; aspect-ratio:1; display:flex; align-items:center; justify-content:center; font-size:30px;">🎵</div>
-    <div style="background-color:#16213e; aspect-ratio:1; display:flex; align-items:center; justify-content:center; font-size:30px;">🎵</div>
-  </div>
-
-</div>
-
-</div>
+  <!-- THANH MENU DƯỚI -->
   <div class="menu-duoi">
     <div class="menu-item" onclick="chuyenTrang('trangChuPage')">
       <span>🏠</span>Trang chủ
@@ -176,7 +191,6 @@
       <span>👤</span>Cá nhân
     </div>
   </div>
-
   <script>
     let danhSachTK = {};
     let viTri = 0;
@@ -187,65 +201,45 @@
       tatCaTrang.forEach(t => t.classList.remove('active'));
       document.getElementById(tenTrang).classList.add('active');
     }
-function like(nut) {
-  let so = nut.querySelector("span");
-  so.innerText = parseInt(so.innerText) + 1;
-}
 
-    function xemAnh() {
-  let file = document.getElementById("chonAnh").files[0];
-  let reader = new FileReader();
-  reader.onload = function(e) {
-    let id = Date.now();
-    let ghiChu = document.getElementById("ghiChu").value || "Không có ghi chú";
-    
-    let baiMoi = document.createElement("div");
-    baiMoi.style = "text-align:center; padding:20px 0; border-bottom:1px solid #333;";
-    baiMoi.innerHTML = `
-      <img src="${e.target.result}" style="width:300px; height:300px; border-radius:20px; object-fit:cover;">
-      <p style="font-weight:bold; margin:10px 0 0 0;">Bạn vừa đăng!</p>
-      <p style="color:gray; font-size:14px; margin:5px 0;">${ghiChu}</p>
-      <div style="display:flex; gap:20px; justify-content:center; margin-top:10px;">
-        <button onclick="like(this)" style="background:none; border:none; color:white; font-size:20px;">❤️ <span>0</span></button>
-        <button onclick="binhLuan(${id})" style="background:none; border:none; color:white; font-size:20px;">💬 <span>0</span></button>
-      </div>
-      <div id="bl${id}" style="display:none; width:90%; background-color:#16213e; border-radius:10px; padding:10px; margin:10px auto;">
-        <div id="danhsachbl${id}"></div>
-        <input id="nhapbl${id}" type="text" placeholder="Bình luận..." style="padding:8px; border-radius:10px; border:none; width:70%; background-color:#0f3460; color:white;">
-        <button onclick="guiBinhLuan(${id})" class="nut" style="padding:8px 15px; font-size:13px;">Gửi</button>
-      </div>
-    `;
-    
-    document.getElementById("danhSachBai").prepend(baiMoi);
-    document.getElementById("ghiChu").value = "";
-  }
-  reader.readAsDataURL(file);
+    function like(nut) {
+      let so = nut.querySelector("span");
+      so.innerText = parseInt(so.innerText) + 1;
     }
 
-function binhLuan(id) {
-  let khung = document.getElementById("bl" + id);
-  if (khung.style.display === "none") {
-    khung.style.display = "block";
-  } else {
-    khung.style.display = "none";
-  }
-}
-
-function guiBinhLuan(id) {
-  let ô = document.getElementById("nhapbl" + id);
-  let khung = document.getElementById("danhsachbl" + id);
-  if (ô.value === "") return;
-  khung.innerHTML += "<p style='margin:5px 0; text-align:left;'>💬 " + ô.value + "</p>";
-  ô.value = "";
-}
-
-    function chaoHoi() {
-      alert("tao là bố của chúng mày!");
+    function binhLuan(id) {
+      let khung = document.getElementById("bl" + id);
+      if (khung.style.display === "none") {
+        khung.style.display = "block";
+      } else {
+        khung.style.display = "none";
+      }
     }
 
-    function doiNen() {
-      document.body.style.backgroundColor = danhSachMau[viTri];
-      viTri = (viTri + 1) % danhSachMau.length;
+    function guiBinhLuan(id) {
+      let o = document.getElementById("nhapbl" + id);
+      let khung = document.getElementById("danhsachbl" + id);
+      if (o.value === "") return;
+      khung.innerHTML += "<p style='margin:5px 0; text-align:left;'>💬 " + o.value + "</p>";
+      o.value = "";
+    }
+
+    function timKiem() {
+      let tu = document.getElementById("tuKhoa").value;
+      document.getElementById("ketQua").innerHTML = "Bạn vừa tìm: " + tu;
+    }
+
+    function doiNen(mau) {
+      document.body.style.backgroundColor = mau;
+    }
+
+    function guitinnhan() {
+      let tinnhan = document.getElementById("hopTinNhan").value;
+      if (tinnhan === "") return;
+      let khung = document.getElementById("khungChat");
+      khung.innerHTML += "<p style='margin:5px 0;'>🧑 " + tinnhan + "</p>";
+      document.getElementById("hopTinNhan").value = "";
+      khung.scrollTop = khung.scrollHeight;
     }
 
     function taoTaiKhoan() {
@@ -258,27 +252,50 @@ function guiBinhLuan(id) {
         alert("Tạo tài khoản thành công! Tên: " + ten);
       }
     }
-    function guitinnhan() {
-  let tinnhan = document.getElementById("hopTinNhan").value;
-  if (tinnhan === "") return;
-  let khung = document.getElementById("khungChat");
-  khung.innerHTML += "<p>🧑 " + tinnhan + "</p>";
-  document.getElementById("hopTinNhan").value = "";
-}
 
     function dangNhap() {
       let ten = document.getElementById("tenNguoiDung").value;
       let mk = document.getElementById("matKhau").value;
       if (danhSachTK[ten] === mk) {
-        alert("Chào mừng " + ten + "!");
+        document.getElementById("khungDangNhap").style.display = "none";
+        document.getElementById("hoSo").style.display = "block";
+        document.getElementById("tenHienThi").innerText = ten;
       } else {
         alert("Sai tên hoặc mật khẩu!");
       }
     }
 
-    function timKiem() {
-      let tu = document.getElementById("tuKhoa").value;
-      document.getElementById("ketQua").innerHTML = "Bạn vừa tìm: " + tu;
+    function dangXuat() {
+      document.getElementById("khungDangNhap").style.display = "block";
+      document.getElementById("hoSo").style.display = "none";
+    }
+
+    function xemAnh() {
+      let file = document.getElementById("chonAnh").files[0];
+      let reader = new FileReader();
+      reader.onload = function(e) {
+        let id = Date.now();
+        let ghiChu = document.getElementById("ghiChu").value || "Không có ghi chú";
+        let baiMoi = document.createElement("div");
+        baiMoi.style = "text-align:center; padding:20px 0; border-bottom:1px solid #333;";
+        baiMoi.innerHTML = `
+          <img src="${e.target.result}" style="width:300px; height:300px; border-radius:20px; object-fit:cover;">
+          <p style="font-weight:bold; margin:10px 0 0 0;">Bạn vừa đăng!</p>
+          <p style="color:gray; font-size:14px; margin:5px 0;">${ghiChu}</p>
+          <div style="display:flex; gap:20px; justify-content:center; margin-top:10px;">
+            <button onclick="like(this)" style="background:none; border:none; color:white; font-size:20px;">❤️ <span>0</span></button>
+            <button onclick="binhLuan(${id})" style="background:none; border:none; color:white; font-size:20px;">💬 <span>0</span></button>
+          </div>
+          <div id="bl${id}" style="display:none; width:90%; background-color:#16213e; border-radius:10px; padding:10px; margin:10px auto;">
+            <div id="danhsachbl${id}"></div>
+            <input id="nhapbl${id}" type="text" placeholder="Bình luận..." class="input-dep" style="width:60%;">
+            <button onclick="guiBinhLuan(${id})" class="nut" style="padding:8px 15px; font-size:13px;">Gửi</button>
+          </div>
+        `;
+        document.getElementById("danhSachBai").prepend(baiMoi);
+        document.getElementById("ghiChu").value = "";
+      }
+      reader.readAsDataURL(file);
     }
   </script>
 
