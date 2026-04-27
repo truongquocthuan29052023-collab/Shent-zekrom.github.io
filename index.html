@@ -456,6 +456,15 @@
   window.quayLaiDanhSach = quayLaiDanhSach;
   window.xemAnh = xemAnh;
 
+  auth.onAuthStateChanged(function(user) {
+  if (user) {
+    document.getElementById("khungDangNhap").style.display = "none";
+    document.getElementById("hoSo").style.display = "block";
+    document.getElementById("tenHienThi").innerText = user.displayName;
+    taiDanhSachNguoiDung();
+  }
+});
+
   taiTatCaBai();
   </script>
 </body>
