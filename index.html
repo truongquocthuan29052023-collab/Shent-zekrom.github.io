@@ -111,24 +111,34 @@
   </div>
 
   <!-- TRANG CHAT -->
-  <div id="chatPage" class="trang">
-    <h1 style="color:#e94560;">Chat</h1>
+<div id="chatPage" class="trang">
+  <h1 style="color:#e94560;">Chat</h1>
 
-    <div style="margin-bottom:10px;">
-      <button class="nut" style="font-size:13px; padding:8px 15px;" onclick="doiNen('#1a1a2e')">Xanh đen</button>
-      <button class="nut" style="font-size:13px; padding:8px 15px;" onclick="doiNen('#e94560')">Đỏ hồng</button>
-      <button class="nut" style="font-size:13px; padding:8px 15px;" onclick="doiNen('#f4a261')">Cam</button>
-      <button class="nut" style="font-size:13px; padding:8px 15px;" onclick="doiNen('#2d6a4f')">Xanh lá</button>
-      <button class="nut" style="font-size:13px; padding:8px 15px;" onclick="doiNen('purple')">Tím</button>
-    </div>
+  <div style="margin-bottom:10px;">
+<button class="nut" style="font-size:13px; padding:8px 15px;" onclick="doiNen('#808080')">Xám</button>
+<button class="nut" style="font-size:13px; padding:8px 15px;" onclick="doiNen('#000000')">Đen</button>
+<button class="nut" style="font-size:13px; padding:8px 15px;" onclick="doiNen('#1a1a2e')">Xanh đen</button>
+<button class="nut" style="font-size:13px; padding:8px 15px;" onclick="doiNen('#FFD700')">Vàng</button>
+<button class="nut" style="font-size:13px; padding:8px 15px;" onclick="doiNen('#ffffff'); document.body.style.color='black'">Trắng</button>
+  </div>
 
-    <div id="khungChat" style="background-color:#16213e; height:400px; overflow-y:auto; padding:10px; border-radius:0; width:100%; box-sizing:border-box; text-align:left;"></div>
+  <!-- Danh sách người dùng -->
+  <div id="danhSachNguoiDung" style="margin-bottom:10px;">
+    <h3 style="color:gray;">Chọn người để chat:</h3>
+    <div id="danhSachND" style="display:flex; flex-wrap:wrap; gap:10px; justify-content:center;"></div>
+  </div>
 
+  <!-- Khung chat -->
+  <div id="khungChatRieng" style="display:none;">
+    <p id="tenNguoiChat" style="color:#e94560; font-weight:bold;"></p>
+    <button onclick="quayLaiDanhSach()" style="background:none; border:none; color:gray; font-size:13px;">← Quay lại</button>
+    <div id="khungChat" style="background-color:#16213e; height:400px; overflow-y:auto; padding:10px; width:100%; box-sizing:border-box; text-align:left;"></div>
     <div style="display:flex; padding:10px; gap:5px;">
       <input type="text" id="hopTinNhan" placeholder="Nhập tin nhắn..." class="input-dep" style="width:70%; margin:0;">
       <button class="nut" onclick="guitinnhan()" style="padding:10px 15px;">Gửi</button>
     </div>
   </div>
+</div>
   <!-- TRANG CÁ NHÂN -->
   <div id="caNhanPage" class="trang">
 
@@ -250,30 +260,38 @@
       document.body.style.backgroundColor = mau;
     }
 
-function guitinnhan() {
-  let tinnhan = document.getElementById("hopTinNhan").value;
-  if (tinnhan === "") return;
-  
-  db.collection("tinnhan").add({
-    noidung: tinnhan,
-    thoiGian: Date.now()
-  }).then(function() {
-    document.getElementById("hopTinNhan").value = "";
-  });
-}
 function taiTinNhan() {
-  db.collection("tinnhan").orderBy("thoiGian").onSnapshot(function(snapshot) {
+  db.collection("tinnhan").doc(phongChatHienTai)
+  .collection("messages").orderBy("thoiGian")
+  .onSnapshot(function(snapshot) {
     let khung = document.getElementById("khungChat");
     khung.innerHTML = "";
     snapshot.forEach(function(doc) {
       let data = doc.data();
-      khung.innerHTML += "<p style='margin:5px 0;'>🧑 " + data.noidung + "</p>";
+      let user = firebase.auth().currentUser;
+      let laMinh = user && data.uid === user.uid;
+      khung.innerHTML += `<p style='margin:5px 0; text-align:${laMinh ? "right" : "left"};'>${laMinh ? "🧑" : "👤"} ${data.noidung}</p>`;
     });
     khung.scrollTop = khung.scrollHeight;
   });
 }
 
-    function taoTaiKhoan() {
+function guitinnhan() {
+  let user = firebase.auth().currentUser;
+  if (!user) { alert("Đăng nhập trước!"); return; }
+  let tinnhan = document.getElementById("hopTinNhan").value;
+  if (tinnhan === "") return;
+  db.collection("tinnhan").doc(phongChatHienTai)
+  .collection("messages").add({
+    noidung: tinnhan,
+    uid: user.uid,
+    thoiGian: Date.now()
+  }).then(function() {
+    document.getElementById("hopTinNhan").value = "";
+  });
+}
+
+function taoTaiKhoan() {
   let ten = document.getElementById("tenNguoiDung").value;
   let mk = document.getElementById("matKhau").value;
   if (ten === "" || mk === "") {
@@ -283,7 +301,13 @@ function taiTinNhan() {
   firebase.auth().createUserWithEmailAndPassword(ten + "@webcuatoi.com", mk)
   .then(function(userCredential) {
     let user = userCredential.user;
-    return user.updateProfile({ displayName: ten });
+    return user.updateProfile({ displayName: ten }).then(function() {
+      return db.collection("nguoidung").doc(user.uid).set({
+        ten: ten,
+        uid: user.uid,
+        thoiGianTao: Date.now()
+      });
+    });
   }).then(function() {
     alert("Tạo tài khoản thành công!");
   }).catch(function(error) {
@@ -300,6 +324,7 @@ function dangNhap() {
     document.getElementById("khungDangNhap").style.display = "none";
     document.getElementById("hoSo").style.display = "block";
     document.getElementById("tenHienThi").innerText = user.displayName;
+    taiDanhSachNguoiDung();
   }).catch(function(error) {
     alert("Sai tên hoặc mật khẩu!");
   });
@@ -377,7 +402,45 @@ function taiTatCaBai() {
     });
   });
 }
-taiTatCaBai();taiTinNhan();
+
+let phongChatHienTai = "";
+
+function taiDanhSachNguoiDung() {
+  db.collection("nguoidung").get().then(function(snapshot) {
+    let khung = document.getElementById("danhSachND");
+    khung.innerHTML = "";
+    snapshot.forEach(function(doc) {
+      let data = doc.data();
+      let user = firebase.auth().currentUser;
+      if (user && data.uid !== user.uid) {
+        khung.innerHTML += `<button class="nut" style="padding:8px 15px; font-size:13px;" onclick="moChat('${data.uid}', '${data.ten}')">${data.ten}</button>`;
+      }
+    });
+    if (khung.innerHTML === "") {
+      khung.innerHTML = "<p style='color:gray;'>Chưa có người dùng nào!</p>";
+    }
+  });
+}
+
+function moChat(uid, ten) {
+  let user = firebase.auth().currentUser;
+  if (!user) {
+    alert("Bạn cần đăng nhập trước!");
+    return;
+  }
+  phongChatHienTai = [user.uid, uid].sort().join("_");
+  document.getElementById("tenNguoiChat").innerText = "Chat với: " + ten;
+  document.getElementById("danhSachNguoiDung").style.display = "none";
+  document.getElementById("khungChatRieng").style.display = "block";
+  taiTinNhan();
+}
+
+function quayLaiDanhSach() {
+  document.getElementById("danhSachNguoiDung").style.display = "block";
+  document.getElementById("khungChatRieng").style.display = "none";
+  document.getElementById("khungChat").innerHTML = "";
+}
+taiTatCaBai();taiTinNhan();taiDanhSachNguoiDung();
   </script>
 </body>
 </html>
