@@ -201,252 +201,262 @@
       <span>👤</span>Cá nhân
     </div>
   </div>
+  
 <script type="module">
-  // Import the functions you need from the SDKs you need
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
-  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-analytics.js";
-  // TODO: Add SDKs for Firebase products that you want to use
-  // https://firebase.google.com/docs/web/setup#available-libraries
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+  import { getFirestore, collection, addDoc, getDocs, onSnapshot, orderBy, query, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+  import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, updateProfile } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-  // Your web app's Firebase configuration
-  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
   const firebaseConfig = {
     apiKey: "AIzaSyAsOsURWu5zZls4P1m2eQ-cja1MaNqPZ0g",
     authDomain: "shent-zekrom-e1b75.firebaseapp.com",
     projectId: "shent-zekrom-e1b75",
     storageBucket: "shent-zekrom-e1b75.firebasestorage.app",
     messagingSenderId: "474389599605",
-    appId: "1:474389599605:web:f9290355487ba0fbab2f3c",
-    measurementId: "G-GTGM0QKVB2"
+    appId: "1:474389599605:web:f9290355487ba0fbab2f3c"
   };
 
-  // Initialize Firebase
   const app = initializeApp(firebaseConfig);
-  const analytics = getAnalytics(app);
-</script>
-  <script>
-    let danhSachTK = {};
-    let viTri = 0;
-    let danhSachMau = ['#1a1a2e', '#e94560', '#f4a261', '#2d6a4f', 'purple'];
+  const db = getFirestore(app);
+  const auth = getAuth(app);
 
-    function chuyenTrang(tenTrang) {
-      let tatCaTrang = document.querySelectorAll('.trang');
-      tatCaTrang.forEach(t => t.classList.remove('active'));
-      document.getElementById(tenTrang).classList.add('active');
-    }
+  let danhSachTK = {};
+  let viTri = 0;
+  let danhSachMau = ['#1a1a2e', '#e94560', '#f4a261', '#2d6a4f', 'purple'];
+  let phongChatHienTai = "";
 
-    function like(nut) {
-      let so = nut.querySelector("span");
-      so.innerText = parseInt(so.innerText) + 1;
-    }
-
-    function binhLuan(id) {
-      let khung = document.getElementById("bl" + id);
-      if (khung.style.display === "none") {
-        khung.style.display = "block";
-      } else {
-        khung.style.display = "none";
-      }
-    }
-
-    function guiBinhLuan(id) {
-      let o = document.getElementById("nhapbl" + id);
-      let khung = document.getElementById("danhsachbl" + id);
-      if (o.value === "") return;
-      khung.innerHTML += "<p style='margin:5px 0; text-align:left;'>💬 " + o.value + "</p>";
-      o.value = "";
-    }
-
-    function timKiem() {
-      let tu = document.getElementById("tuKhoa").value;
-      document.getElementById("ketQua").innerHTML = "Bạn vừa tìm: " + tu;
-    }
-
-    function doiNen(mau) {
-      document.body.style.backgroundColor = mau;
-    }
-
-function taiTinNhan() {
-  db.collection("tinnhan").doc(phongChatHienTai)
-  .collection("messages").orderBy("thoiGian")
-  .onSnapshot(function(snapshot) {
-    let khung = document.getElementById("khungChat");
-    khung.innerHTML = "";
-    snapshot.forEach(function(doc) {
-      let data = doc.data();
-      let user = firebase.auth().currentUser;
-      let laMinh = user && data.uid === user.uid;
-      khung.innerHTML += `<p style='margin:5px 0; text-align:${laMinh ? "right" : "left"};'>${laMinh ? "🧑" : "👤"} ${data.noidung}</p>`;
-    });
-    khung.scrollTop = khung.scrollHeight;
-  });
-}
-
-function guitinnhan() {
-  let user = firebase.auth().currentUser;
-  if (!user) { alert("Đăng nhập trước!"); return; }
-  let tinnhan = document.getElementById("hopTinNhan").value;
-  if (tinnhan === "") return;
-  db.collection("tinnhan").doc(phongChatHienTai)
-  .collection("messages").add({
-    noidung: tinnhan,
-    uid: user.uid,
-    thoiGian: Date.now()
-  }).then(function() {
-    document.getElementById("hopTinNhan").value = "";
-  });
-}
-
-function taoTaiKhoan() {
-  let ten = document.getElementById("tenNguoiDung").value;
-  let mk = document.getElementById("matKhau").value;
-  if (ten === "" || mk === "") {
-    alert("Điền đầy đủ tên và mật khẩu!");
-    return;
+  function chuyenTrang(tenTrang) {
+    let tatCaTrang = document.querySelectorAll('.trang');
+    tatCaTrang.forEach(t => t.classList.remove('active'));
+    document.getElementById(tenTrang).classList.add('active');
   }
-  firebase.auth().createUserWithEmailAndPassword(ten + "@webcuatoi.com", mk)
-  .then(function(userCredential) {
-    let user = userCredential.user;
-    return user.updateProfile({ displayName: ten }).then(function() {
-      return db.collection("nguoidung").doc(user.uid).set({
-        ten: ten,
-        uid: user.uid,
-        thoiGianTao: Date.now()
-      });
-    });
-  }).then(function() {
-    alert("Tạo tài khoản thành công!");
-  }).catch(function(error) {
-    alert("Lỗi: " + error.message);
-  });
-}
 
-function dangNhap() {
-  let ten = document.getElementById("tenNguoiDung").value;
-  let mk = document.getElementById("matKhau").value;
-  firebase.auth().signInWithEmailAndPassword(ten + "@webcuatoi.com", mk)
-  .then(function(userCredential) {
-    let user = userCredential.user;
-    document.getElementById("khungDangNhap").style.display = "none";
-    document.getElementById("hoSo").style.display = "block";
-    document.getElementById("tenHienThi").innerText = user.displayName;
-    taiDanhSachNguoiDung();
-  }).catch(function(error) {
-    alert("Sai tên hoặc mật khẩu!");
-  });
-}
-
-function dangXuat() {
-  firebase.auth().signOut().then(function() {
-    document.getElementById("khungDangNhap").style.display = "block";
-    document.getElementById("hoSo").style.display = "none";
-  });
-}
-
-    function xemAnh() {
-  let file = document.getElementById("chonAnh").files[0];
-  let reader = new FileReader();
-  reader.onload = function(e) {
-    let id = Date.now();
-    let ghiChu = document.getElementById("ghiChu").value || "Không có ghi chú";
-
-    // Nén ảnh trước khi lưu
-    let canvas = document.createElement("canvas");
-    let img = new Image();
-    img.onload = function() {
-      canvas.width = 400;
-      canvas.height = 400;
-      let ctx = canvas.getContext("2d");
-      ctx.drawImage(img, 0, 0, 400, 400);
-      let anhNen = canvas.toDataURL("image/jpeg", 0.5);
-
-      // Lưu lên Firestore
-      db.collection("baidang").add({
-        anh: anhNen,
-        ghiChu: ghiChu,
-        thoiGian: Date.now(),
-        luot_like: 0
-      }).then(function() {
-        hienBaiDang(id, anhNen, ghiChu);
-        document.getElementById("ghiChu").value = "";
-        alert("Đăng ảnh thành công!");
-      }).catch(function(error) {
-        alert("Lỗi: " + error);
-      });
-    }
-    img.src = e.target.result;
+  function like(nut) {
+    let so = nut.querySelector("span");
+    so.innerText = parseInt(so.innerText) + 1;
   }
-  reader.readAsDataURL(file);
-}
 
-function hienBaiDang(id, anh, ghiChu) {
-  let baiMoi = document.createElement("div");
-  baiMoi.style = "text-align:center; padding:20px 0; border-bottom:1px solid #333;";
-  baiMoi.innerHTML = `
-    <img src="${anh}" style="width:300px; height:300px; border-radius:20px; object-fit:cover;">
-    <p style="font-weight:bold; margin:10px 0 0 0;">Bạn vừa đăng!</p>
-    <p style="color:gray; font-size:14px; margin:5px 0;">${ghiChu}</p>
-    <div style="display:flex; gap:20px; justify-content:center; margin-top:10px;">
-      <button onclick="like(this)" style="background:none; border:none; color:white; font-size:20px;">❤️ <span>0</span></button>
-      <button onclick="binhLuan(${id})" style="background:none; border:none; color:white; font-size:20px;">💬 <span>0</span></button>
-    </div>
-    <div id="bl${id}" style="display:none; width:90%; background-color:#16213e; border-radius:10px; padding:10px; margin:10px auto;">
-      <div id="danhsachbl${id}"></div>
-      <input id="nhapbl${id}" type="text" placeholder="Bình luận..." class="input-dep" style="width:60%;">
-      <button onclick="guiBinhLuan(${id})" class="nut" style="padding:8px 15px; font-size:13px;">Gửi</button>
-    </div>
-  `;
-  document.getElementById("danhSachBai").prepend(baiMoi);
-}
-function taiTatCaBai() {
-  db.collection("baidang").orderBy("thoiGian", "desc").get()
-  .then(function(querySnapshot) {
-    querySnapshot.forEach(function(doc) {
-      let data = doc.data();
-      let id = doc.id;
-      hienBaiDang(id, data.anh, data.ghiChu);
+  function binhLuan(id) {
+    let khung = document.getElementById("bl" + id);
+    if (khung.style.display === "none") {
+      khung.style.display = "block";
+    } else {
+      khung.style.display = "none";
+    }
+  }
+
+  function guiBinhLuan(id) {
+    let o = document.getElementById("nhapbl" + id);
+    let khung = document.getElementById("danhsachbl" + id);
+    if (o.value === "") return;
+    khung.innerHTML += "<p style='margin:5px 0; text-align:left;'>💬 " + o.value + "</p>";
+    o.value = "";
+  }
+
+  function timKiem() {
+    let tu = document.getElementById("tuKhoa").value;
+    document.getElementById("ketQua").innerHTML = "Bạn vừa tìm: " + tu;
+  }
+
+  function doiNen(mau) {
+    document.body.style.backgroundColor = mau;
+    if (mau === '#ffffff') {
+      document.body.style.color = 'black';
+    } else {
+      document.body.style.color = 'white';
+    }
+  }
+
+  function guitinnhan() {
+    let user = auth.currentUser;
+    if (!user) { alert("Đăng nhập trước!"); return; }
+    let tinnhan = document.getElementById("hopTinNhan").value;
+    if (tinnhan === "") return;
+    addDoc(collection(db, "tinnhan", phongChatHienTai, "messages"), {
+      noidung: tinnhan,
+      uid: user.uid,
+      thoiGian: Date.now()
+    }).then(function() {
+      document.getElementById("hopTinNhan").value = "";
     });
-  });
-}
+  }
 
-let phongChatHienTai = "";
+  function taoTaiKhoan() {
+    let ten = document.getElementById("tenNguoiDung").value;
+    let mk = document.getElementById("matKhau").value;
+    if (ten === "" || mk === "") {
+      alert("Điền đầy đủ tên và mật khẩu!");
+      return;
+    }
+    createUserWithEmailAndPassword(auth, ten + "@gmail.com", mk)
+    .then(function(userCredential) {
+      let user = userCredential.user;
+      return updateProfile(user, { displayName: ten }).then(function() {
+        return setDoc(doc(db, "nguoidung", user.uid), {
+          ten: ten,
+          uid: user.uid,
+          thoiGianTao: Date.now()
+        });
+      });
+    }).then(function() {
+      alert("Tạo tài khoản thành công!");
+    }).catch(function(error) {
+      alert("Lỗi: " + error.message);
+    });
+  }
 
-function taiDanhSachNguoiDung() {
-  db.collection("nguoidung").get().then(function(snapshot) {
-    let khung = document.getElementById("danhSachND");
-    khung.innerHTML = "";
-    snapshot.forEach(function(doc) {
-      let data = doc.data();
-      let user = firebase.auth().currentUser;
-      if (user && data.uid !== user.uid) {
-        khung.innerHTML += `<button class="nut" style="padding:8px 15px; font-size:13px;" onclick="moChat('${data.uid}', '${data.ten}')">${data.ten}</button>`;
+  function dangNhap() {
+    let ten = document.getElementById("tenNguoiDung").value;
+    let mk = document.getElementById("matKhau").value;
+    signInWithEmailAndPassword(auth, ten + "@gmail.com", mk)
+    .then(function(userCredential) {
+      let user = userCredential.user;
+      document.getElementById("khungDangNhap").style.display = "none";
+      document.getElementById("hoSo").style.display = "block";
+      document.getElementById("tenHienThi").innerText = user.displayName;
+      taiDanhSachNguoiDung();
+    }).catch(function(error) {
+      alert("Sai tên hoặc mật khẩu!");
+    });
+  }
+
+  function dangXuat() {
+    signOut(auth).then(function() {
+      document.getElementById("khungDangNhap").style.display = "block";
+      document.getElementById("hoSo").style.display = "none";
+    });
+  }
+
+  function taiDanhSachNguoiDung() {
+    getDocs(collection(db, "nguoidung")).then(function(snapshot) {
+      let khung = document.getElementById("danhSachND");
+      khung.innerHTML = "";
+      snapshot.forEach(function(doc) {
+        let data = doc.data();
+        let user = auth.currentUser;
+        if (user && data.uid !== user.uid) {
+          let nut = document.createElement("button");
+          nut.className = "nut";
+          nut.style = "padding:8px 15px; font-size:13px;";
+          nut.innerText = data.ten;
+          nut.onclick = function() { moChat(data.uid, data.ten); };
+          khung.appendChild(nut);
+        }
+      });
+      if (khung.innerHTML === "") {
+        khung.innerHTML = "<p style='color:gray;'>Chưa có người dùng nào!</p>";
       }
     });
-    if (khung.innerHTML === "") {
-      khung.innerHTML = "<p style='color:gray;'>Chưa có người dùng nào!</p>";
-    }
-  });
-}
-
-function moChat(uid, ten) {
-  let user = firebase.auth().currentUser;
-  if (!user) {
-    alert("Bạn cần đăng nhập trước!");
-    return;
   }
-  phongChatHienTai = [user.uid, uid].sort().join("_");
-  document.getElementById("tenNguoiChat").innerText = "Chat với: " + ten;
-  document.getElementById("danhSachNguoiDung").style.display = "none";
-  document.getElementById("khungChatRieng").style.display = "block";
-  taiTinNhan();
-}
 
-function quayLaiDanhSach() {
-  document.getElementById("danhSachNguoiDung").style.display = "block";
-  document.getElementById("khungChatRieng").style.display = "none";
-  document.getElementById("khungChat").innerHTML = "";
-}
-taiTatCaBai();taiTinNhan();taiDanhSachNguoiDung();
+  function moChat(uid, ten) {
+    let user = auth.currentUser;
+    if (!user) { alert("Đăng nhập trước!"); return; }
+    phongChatHienTai = [user.uid, uid].sort().join("_");
+    document.getElementById("tenNguoiChat").innerText = "Chat với: " + ten;
+    document.getElementById("danhSachNguoiDung").style.display = "none";
+    document.getElementById("khungChatRieng").style.display = "block";
+    taiTinNhan();
+  }
+
+  function quayLaiDanhSach() {
+    document.getElementById("danhSachNguoiDung").style.display = "block";
+    document.getElementById("khungChatRieng").style.display = "none";
+    document.getElementById("khungChat").innerHTML = "";
+  }
+
+  function taiTinNhan() {
+    const q = query(collection(db, "tinnhan", phongChatHienTai, "messages"), orderBy("thoiGian"));
+    onSnapshot(q, function(snapshot) {
+      let khung = document.getElementById("khungChat");
+      khung.innerHTML = "";
+      snapshot.forEach(function(doc) {
+        let data = doc.data();
+        let user = auth.currentUser;
+        let laMinh = user && data.uid === user.uid;
+        khung.innerHTML += `<p style='margin:5px 0; text-align:${laMinh ? "right" : "left"};'>${laMinh ? "🧑" : "👤"} ${data.noidung}</p>`;
+      });
+      khung.scrollTop = khung.scrollHeight;
+    });
+  }
+
+  function xemAnh() {
+    let file = document.getElementById("chonAnh").files[0];
+    let reader = new FileReader();
+    reader.onload = function(e) {
+      let id = Date.now();
+      let ghiChu = document.getElementById("ghiChu").value || "Không có ghi chú";
+      let canvas = document.createElement("canvas");
+      let img = new Image();
+      img.onload = function() {
+        canvas.width = 400;
+        canvas.height = 400;
+        let ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0, 400, 400);
+        let anhNen = canvas.toDataURL("image/jpeg", 0.5);
+        addDoc(collection(db, "baidang"), {
+          anh: anhNen,
+          ghiChu: ghiChu,
+          thoiGian: Date.now(),
+          luot_like: 0
+        }).then(function() {
+          hienBaiDang(id, anhNen, ghiChu);
+          document.getElementById("ghiChu").value = "";
+          alert("Đăng ảnh thành công!");
+        });
+      }
+      img.src = e.target.result;
+    }
+    reader.readAsDataURL(file);
+  }
+
+  function hienBaiDang(id, anh, ghiChu) {
+    let baiMoi = document.createElement("div");
+    baiMoi.style = "text-align:center; padding:20px 0; border-bottom:1px solid #333;";
+    baiMoi.innerHTML = `
+      <img src="${anh}" style="width:300px; height:300px; border-radius:20px; object-fit:cover;">
+      <p style="font-weight:bold; margin:10px 0 0 0;">Bạn vừa đăng!</p>
+      <p style="color:gray; font-size:14px; margin:5px 0;">${ghiChu}</p>
+      <div style="display:flex; gap:20px; justify-content:center; margin-top:10px;">
+        <button onclick="like(this)" style="background:none; border:none; color:white; font-size:20px;">❤️ <span>0</span></button>
+        <button onclick="binhLuan(${id})" style="background:none; border:none; color:white; font-size:20px;">💬 <span>0</span></button>
+      </div>
+      <div id="bl${id}" style="display:none; width:90%; background-color:#16213e; border-radius:10px; padding:10px; margin:10px auto;">
+        <div id="danhsachbl${id}"></div>
+        <input id="nhapbl${id}" type="text" placeholder="Bình luận..." class="input-dep" style="width:60%;">
+        <button onclick="guiBinhLuan(${id})" class="nut" style="padding:8px 15px; font-size:13px;">Gửi</button>
+      </div>
+    `;
+    document.getElementById("danhSachBai").prepend(baiMoi);
+  }
+
+  function taiTatCaBai() {
+    const q = query(collection(db, "baidang"), orderBy("thoiGian", "desc"));
+    getDocs(q).then(function(snapshot) {
+      snapshot.forEach(function(doc) {
+        let data = doc.data();
+        hienBaiDang(doc.id, data.anh, data.ghiChu);
+      });
+    });
+  }
+
+  // Gắn các hàm vào window để HTML gọi được
+  window.chuyenTrang = chuyenTrang;
+  window.like = like;
+  window.binhLuan = binhLuan;
+  window.guiBinhLuan = guiBinhLuan;
+  window.timKiem = timKiem;
+  window.doiNen = doiNen;
+  window.guitinnhan = guitinnhan;
+  window.taoTaiKhoan = taoTaiKhoan;
+  window.dangNhap = dangNhap;
+  window.dangXuat = dangXuat;
+  window.taiDanhSachNguoiDung = taiDanhSachNguoiDung;
+  window.moChat = moChat;
+  window.quayLaiDanhSach = quayLaiDanhSach;
+  window.xemAnh = xemAnh;
+
+  taiTatCaBai();
   </script>
 </body>
 </html>
