@@ -192,6 +192,7 @@
     </div>
   </div>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 <script>
   const firebaseConfig = {
@@ -206,6 +207,7 @@
   const db = firebase.firestore();
   console.log("Firebase kết nối thành công!");
 </script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
   <script>
     let danhSachTK = {};
     let viTri = 0;
@@ -248,7 +250,7 @@
       document.body.style.backgroundColor = mau;
     }
 
-    function guitinnhan() {
+function guitinnhan() {
   let tinnhan = document.getElementById("hopTinNhan").value;
   if (tinnhan === "") return;
   
@@ -258,8 +260,8 @@
   }).then(function() {
     document.getElementById("hopTinNhan").value = "";
   });
-    }
-    function taiTinNhan() {
+}
+function taiTinNhan() {
   db.collection("tinnhan").orderBy("thoiGian").onSnapshot(function(snapshot) {
     let khung = document.getElementById("khungChat");
     khung.innerHTML = "";
@@ -269,36 +271,48 @@
     });
     khung.scrollTop = khung.scrollHeight;
   });
-    }
+}
 
     function taoTaiKhoan() {
-      let ten = document.getElementById("tenNguoiDung").value;
-      let mk = document.getElementById("matKhau").value;
-      if (ten === "" || mk === "") {
-        alert("Điền đầy đủ tên và mật khẩu!");
-      } else {
-        danhSachTK[ten] = mk;
-        alert("Tạo tài khoản thành công! Tên: " + ten);
-      }
-    }
+  let ten = document.getElementById("tenNguoiDung").value;
+  let mk = document.getElementById("matKhau").value;
+  if (ten === "" || mk === "") {
+    alert("Điền đầy đủ tên và mật khẩu!");
+    return;
+  }
+  firebase.auth().createUserWithEmailAndPassword(ten + "@webcuatoi.com", mk)
+  .then(function(userCredential) {
+    let user = userCredential.user;
+    return user.updateProfile({ displayName: ten });
+  }).then(function() {
+    alert("Tạo tài khoản thành công!");
+  }).catch(function(error) {
+    alert("Lỗi: " + error.message);
+  });
+}
 
-    function dangNhap() {
-      let ten = document.getElementById("tenNguoiDung").value;
-      let mk = document.getElementById("matKhau").value;
-      if (danhSachTK[ten] === mk) {
-        document.getElementById("khungDangNhap").style.display = "none";
-        document.getElementById("hoSo").style.display = "block";
-        document.getElementById("tenHienThi").innerText = ten;
-      } else {
-        alert("Sai tên hoặc mật khẩu!");
-      }
-    }
+function dangNhap() {
+  let ten = document.getElementById("tenNguoiDung").value;
+  let mk = document.getElementById("matKhau").value;
+  firebase.auth().signInWithEmailAndPassword(ten + "@webcuatoi.com", mk)
+  .then(function(userCredential) {
+    let user = userCredential.user;
+    document.getElementById("khungDangNhap").style.display = "none";
+    document.getElementById("hoSo").style.display = "block";
+    document.getElementById("tenHienThi").innerText = user.displayName;
+  }).catch(function(error) {
+    alert("Sai tên hoặc mật khẩu!");
+  });
+}
 
-    function dangXuat() {
-      document.getElementById("khungDangNhap").style.display = "block";
-      document.getElementById("hoSo").style.display = "none";
-    }
-  function xemAnh() {
+function dangXuat() {
+  firebase.auth().signOut().then(function() {
+    document.getElementById("khungDangNhap").style.display = "block";
+    document.getElementById("hoSo").style.display = "none";
+  });
+}
+
+    function xemAnh() {
   let file = document.getElementById("chonAnh").files[0];
   let reader = new FileReader();
   reader.onload = function(e) {
@@ -334,7 +348,7 @@
   reader.readAsDataURL(file);
 }
 
-  function hienBaiDang(id, anh, ghiChu) {
+function hienBaiDang(id, anh, ghiChu) {
   let baiMoi = document.createElement("div");
   baiMoi.style = "text-align:center; padding:20px 0; border-bottom:1px solid #333;";
   baiMoi.innerHTML = `
@@ -353,7 +367,7 @@
   `;
   document.getElementById("danhSachBai").prepend(baiMoi);
 }
-    function taiTatCaBai() {
+function taiTatCaBai() {
   db.collection("baidang").orderBy("thoiGian", "desc").get()
   .then(function(querySnapshot) {
     querySnapshot.forEach(function(doc) {
@@ -365,6 +379,5 @@
 }
 taiTatCaBai();taiTinNhan();
   </script>
-
 </body>
 </html>
